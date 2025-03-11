@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+  db_:
+    image: postgres:11
+    container_name: db_
+    volumes:
+      - ./data:/app/data
+    env_file:
+      - .env-docker
+
+  app:
+    build:
+      context: .
+    env_file:
+      - .env-docker
+    container_name: wallets_app
+    command: ["/app/docker/app.sh"]
+    ports:
+      - 9991:8000
+    depends_on:
+      - db_
