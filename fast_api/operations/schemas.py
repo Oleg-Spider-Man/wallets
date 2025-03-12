@@ -19,3 +19,7 @@ class ActivityLog(BaseModel):
     old_balance: Union[Decimal, float, int]
     new_balance: Union[Decimal, float, int]
     timestamp: datetime = datetime.now(timezone.utc)
+
+
+class WalletCreate(BaseModel):
+    uuid: UUID

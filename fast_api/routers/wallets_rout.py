@@ -3,8 +3,9 @@ from fastapi import Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from fast_api.dependencies import get_async_session
 from fast_api.operations import schemas
-from fast_api.operations.func_wallet import update_wallet_balance, get_wallet_balance, get_activity_log
+from fast_api.operations.func_wallet import update_wallet_balance, get_wallet_balance, get_activity_log, add_wallet
 from fast_api.operations.schemas import ActivityLog
+
 
 router = APIRouter(
     prefix="/money",
@@ -43,3 +44,12 @@ async def get_log(wallet_uuid: str, limit: int = Query(10, ge=0), db: AsyncSessi
         return result
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/api/v1/create_wallet/", response_model=str)
+async def create_wallet(db: AsyncSession = Depends(get_async_session)):
+    try:
+        wallet = await add_wallet(db)
+        return f"Новый кошелек создан. Используйте его для данного апи. Вот его uuid: {wallet}"
+    except Exception:
+        raise HTTPException(status_code=500, detail="Ошибка при создании кошелька")

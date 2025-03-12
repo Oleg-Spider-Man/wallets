@@ -77,3 +77,10 @@ async def test_logs_not_fond(aclient):
     response = await aclient.get("/money/api/v1/activity_log/01238567-89ab-cdef-0123-456789abcdef", params={"limit": 2})
     assert response.status_code == 400
     assert response.json() == {"detail": "404: Wallet history not found"}
+
+
+@pytest.mark.asyncio
+async def test_create_wallet(aclient):
+    response = await aclient.post("/money/api/v1/create_wallet/")
+    assert response.status_code == 200
+    assert len(response.json()) == 105

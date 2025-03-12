@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from typing import Union
 from fast_api.operations.models import Wallet, Transaction
+from fast_api.operations.schemas import WalletCreate
 
 
 async def update_wallet_balance(
@@ -59,3 +60,15 @@ async def get_activity_log(session: AsyncSession, wallet_uuid: str, limit: int =
     if not wallet_history:
         raise HTTPException(status_code=404, detail="Wallet history not found")
     return wallet_history
+
+
+async def add_wallet(session: AsyncSession) -> WalletCreate:
+    try:
+        new_wallet = Wallet(balance=0)
+        session.add(new_wallet)
+        await session.commit()
+        await session.refresh(new_wallet)
+        return new_wallet.id
+    except Exception as e:
+        await session.rollback()
+        raise e
